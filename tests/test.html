@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filters</title>
+</head>
+
+<body>
+  <div id="plain-select">
+    <select id="cities"></select>
+  </div>
+
+  <form id="filters-defined-as-name">
+    <select name="product"></select>
+    <select name="city"></select>
+    <select name="channel"></select>
+    <span>#filters-defined-as-name</span>
+  </form>
+
+  <form id="filters-defined-as-id">
+    <select id="product"></select>
+    <select id="city"></select>
+    <select id="channel"></select>
+    <span>#filters-defined-as-id</span>
+  </form>
+
+  <form id="filters-with-global-defaults">
+    <select name="product"></select>
+    <select name="city"></select>
+    <select name="channel"></select>
+    <span>#filters-with-global-defaults</span>
+  </form>
+
+  <form id="filters-with-field-defaults">
+    <select name="product"></select>
+    <select name="city"></select>
+    <select name="channel"></select>
+    <span>#filters-with-field-defaults</span>
+  </form>
+
+  <form id="filters-with-url">
+    <select name="product"></select>
+    <select name="city"></select>
+    <select name="channel"></select>
+    <span>#filters-with-url</span>
+  </form>
+
+  <form id="filters-without-elements">
+    <span>#filters-without-elements</span>
+  </form>
+
+  <form id="filters-with-html-templates">
+    <select name="product"></select>
+    <select name="city"></select>
+    <select name="channel"></select>
+    <span>#filters-with-html-templates</span>
+  </form>
+
+  <script src="../filters.min.js"></script>
+  <script>
+    const actions = [
+      fetch("data-cities.json")
+        .then((r) => r.json())
+        .then((data) => {
+          gramex.filters.render({
+            element: "#plain-select", data: {'cities': data}
+          });
+        }),
+
+      fetch("data-sales.json")
+        .then((r) => r.json())
+        .then((data) => {
+          gramex.filters.render({ element: "#filters-defined-as-name", data: data });
+          gramex.filters.render({ element: "#filters-defined-as-id", data: data });
+          gramex.filters.render({
+            element: "#filters-with-global-defaults",
+            data: data,
+            fields: { default: "-" },
+          });
+          gramex.filters.render({
+            element: "#filters-with-field-defaults",
+            data: data,
+            field: {
+              product: { default: "-" },
+              city: { default: "-" },
+              channel: { default: "-" },
+            },
+          });
+        }),
+
+      gramex.filters.render({
+        element: "#filters-with-url",
+        url: "data-sales.json",
+        fields: { default: "-" },
+      }),
+
+      gramex.filters.render({
+        element: "#filters-without-elements",
+        url: "data-sales.json",
+        fields: { default: "-" },
+      }),
+
+      fetch("data-sales-labels.json")
+        .then((r) => r.json())
+        .then((data) => {
+          gramex.filters.render({
+            element: "#filters-with-html-templates",
+            data: data,
+            field: {
+              product: { default: { product_id: "", product: "" } },
+              city: { default: { city_id: "", city: "" } },
+              channel: { default: { channel_id: "", channel: "" } }
+            },
+            value: {
+              product: { label: d => d.product, value: d => d.product_id },
+              city: {
+                render: ({ city_id, city }) => `<option value="${city_id}">${city}</option>`
+              },
+              channel: {
+                render: ({ channel_id, channel }) => `<option value="${channel_id || ""}">${channel || ""}</option>`,
+              },
+            },
+          });
+        }),
+    ];
+    Promise.all(actions).then(() => {
+      window.renderComplete = true;
+    });
+  </script>
+</body>
+
+</html>

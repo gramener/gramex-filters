@@ -1,0 +1,16 @@
+{
+  "product": [
+    {"product_id": "A", "product": "Alpha"},
+    {"product_id": "B", "product": "Beta"},
+    {"product_id": "G", "product": "Gamma"}
+  ],
+  "city": [
+    {"city_id": "L", "city": "London"},
+    {"city_id": "P", "city": "Paris"},
+    {"city_id": "O", "city": "Olso"}
+  ],
+  "channel": [
+    {"channel_id": "D", "channel": "Direct"},
+    {"channel_id": "I", "channel": "Indirect"}
+  ]
+}

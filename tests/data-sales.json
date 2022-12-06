@@ -1,0 +1,5 @@
+{
+  "product": ["Alpha", "Beta", "Gamma"],
+  "city": ["London", "Oslo", "Paris"],
+  "channel": ["Direct", "Indirect"]
+}

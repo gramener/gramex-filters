@@ -1,0 +1,7 @@
+TODO*
+.vscode
+node_modules/
+
+# Don't commit JS files. It's always an output. We code in TypeScript
+*.js
+*.map

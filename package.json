@@ -1,0 +1,50 @@
+{
+  "name": "@gramex/filters",
+  "version": "1.0.0",
+  "description": "Populate filter inputs/dropdowns from data",
+  "main": "filters.js",
+  "browser": "filters.min.js",
+  "scripts": {
+    "build": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js && esbuild filters.ts --bundle --platform=node --outfile=filters.js && esbuild tests/select.test.ts --outdir=tests/",
+    "pretest": "npm run build",
+    "test": "jest"
+  },
+  "files": [
+    "filters.*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gramener/gramex-filters.git"
+  },
+  "keywords": [
+    "gramex",
+    "filter",
+    "filterhandler",
+    "select",
+    "dropdown"
+  ],
+  "author": "S Anand <root.node@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gramener/gramex-filters/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://github.com/gramener/gramex-filters#readme",
+  "jest": {
+    "preset": "jest-puppeteer",
+    "testMatch": [
+      "**/*.test.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.3",
+    "@types/jest-environment-puppeteer": "^5.0.3",
+    "esbuild": "^0.15.15",
+    "jest": "^29.3.1",
+    "jest-puppeteer": "^6.1.1",
+    "node-http-server": "^8.1.5"
+  }
+}
