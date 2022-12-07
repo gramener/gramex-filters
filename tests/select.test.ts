@@ -5,11 +5,18 @@ const sales = JSON.parse(fs.readFileSync("tests/data-sales.json", { encoding: "u
 describe("test update()", () => {
   beforeAll(async () => {
     page.on("console", (consoleObj) => console.log(consoleObj.text()));
-    await page.goto("http://127.0.0.1:4444/tests/test.html");
+    await page.goto("http://127.0.0.1:4444/tests/select.test.html");
     await page.waitForFunction("window.renderComplete");
   });
 
   const mapText = (els: Element[]) => els.map((el: Element) => el.textContent);
+  const mapAttrs = (els: Element[]) =>
+    els.map((el: Element) => {
+      const attrs = {};
+      for (const attr of el.attributes) attrs[attr.name] = attr.value;
+      console.log(JSON.stringify(attrs))
+      return attrs;
+    });
 
   test("#plain-select adds options to <select>", async () => {
     await expect(
@@ -57,6 +64,36 @@ describe("test update()", () => {
       await expect(
         page.$$eval(`#filters-without-elements [name="${key}"] option`, mapText)
       ).resolves.toEqual(["-", ...(values as string[])]);
+    }
+  });
+  test("#filters-without-elements-multiple creates <select multiple> as required", async () => {
+    for (const [key, values] of Object.entries(sales)) {
+      await expect(
+        page.$$eval(`#filters-without-elements-multiple [name="${key}"]`, mapAttrs)
+      ).resolves.toEqual([{ name: key, multiple: "" }]);
+      await expect(
+        page.$$eval(`#filters-without-elements-multiple [name="${key}"] option`, mapText)
+      ).resolves.toEqual(["-", ...(values as string[])]);
+    }
+  });
+  test("#filters-with-attrs preserves <select> attributes", async () => {
+    for (const [key, values] of Object.entries(sales)) {
+      await expect(page.$$eval(`#filters-with-attrs [name="${key}"]`, mapAttrs)).resolves.toEqual([
+        { name: key, multiple: "", required: "", size: "3" },
+      ]);
+      await expect(
+        page.$$eval(`#filters-with-attrs [name="${key}"] option`, mapText)
+      ).resolves.toEqual(["-", ...(values as string[])]);
+    }
+  });
+  test("#filters-selected selects the right options", async () => {
+    for (const [key, values] of Object.entries(sales)) {
+      await expect(
+        page.$$eval(`#filters-selected [name="${key}"] option`, mapText)
+      ).resolves.toEqual(["-", ...(values as string[])]);
+      await expect(
+        page.$$eval(`#filters-selected [name="${key}"] option[selected]`, mapAttrs)
+      ).resolves.toEqual([{"selected": "", "value": (values as string[])[1]}]);
     }
   });
 });

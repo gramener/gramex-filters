@@ -6,9 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filters</title>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"></link>
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
+
   <div id="plain-select">
     <select id="cities"></select>
   </div>
@@ -52,11 +55,29 @@
     <span>#filters-without-elements</span>
   </form>
 
+  <form id="filters-without-elements-multiple">
+    <span>#filters-without-elements-multiple</span>
+  </form>
+
+  <form id="filters-with-attrs">
+    <select name="product" multiple required size="3"></select>
+    <select name="city" multiple required size="3"></select>
+    <select name="channel" multiple required size="3"></select>
+    <span>#filters-with-attrs</span>
+  </form>
+
+  <form id="filters-selected">
+    <span>#filters-selected</span>
+  </form>
+
   <form id="filters-with-html-templates">
     <select name="product"></select>
     <select name="city"></select>
     <select name="channel"></select>
     <span>#filters-with-html-templates</span>
+  </form>
+
+  <form id="bootstrap-without-elements" class="d-flex">
   </form>
 
   <script src="../filters.min.js"></script>
@@ -66,7 +87,8 @@
         .then((r) => r.json())
         .then((data) => {
           gramex.filters.render({
-            element: "#plain-select", data: {'cities': data}
+            element: "#plain-select",
+            data: { cities: data },
           });
         }),
 
@@ -103,6 +125,37 @@
         fields: { default: "-" },
       }),
 
+      gramex.filters.render({
+        element: "#filters-without-elements-multiple",
+        url: "data-sales.json",
+        fields: { default: "-", multiple: true },
+      }),
+
+      gramex.filters.render({
+        element: "#filters-with-attrs",
+        url: "data-sales.json",
+        fields: { default: "-", multiple: true },
+      }),
+
+      gramex.filters.render({
+        element: "#filters-selected",
+        url: "data-sales.json",
+        fields: {
+          default: "-",
+          multiple: true,
+          value: {
+            // Note: In the test case, we check that the 2nd value is always selected
+            product: "Beta",
+            city: "Oslo",
+            channel: "Direct",  // overridden by field.channel.value
+            irrelevant: "Other",
+          },
+        },
+        field: {
+          channel: { value: "Indirect" },
+        }
+      }),
+
       fetch("data-sales-labels.json")
         .then((r) => r.json())
         .then((data) => {
@@ -112,19 +165,34 @@
             field: {
               product: { default: { product_id: "", product: "" } },
               city: { default: { city_id: "", city: "" } },
-              channel: { default: { channel_id: "", channel: "" } }
+              channel: { default: { channel_id: "", channel: "" } },
             },
             value: {
-              product: { label: d => d.product, value: d => d.product_id },
+              product: { label: (d) => d.product, value: (d) => d.product_id },
               city: {
-                render: ({ city_id, city }) => `<option value="${city_id}">${city}</option>`
+                render: ({ city_id, city }) => `<option value="${city_id}">${city}</option>`,
               },
               channel: {
-                render: ({ channel_id, channel }) => `<option value="${channel_id || ""}">${channel || ""}</option>`,
+                render: ({ channel_id, channel }) =>
+                  `<option value="${channel_id || ""}">${channel || ""}</option>`,
               },
             },
           });
         }),
+
+      gramex.filters.render({
+        element: "#bootstrap-without-elements",
+        type: "bs5",
+        url: "data-sales.json",
+        fields: { multiple: true, buttonClass: "btn btn-danger", dropdownClass: "mx-1 my-3" },
+        field: {
+          product: { default: {value: "", label: "---"} },
+          city: { default: {value: "", label: "---"} },
+          channel: { default: {value: "", label: "---"} },
+        },
+        values: { href: ({value}) => `https://example.com/${value}` },
+      }),
+
     ];
     Promise.all(actions).then(() => {
       window.renderComplete = true;
