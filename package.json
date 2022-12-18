@@ -1,11 +1,11 @@
 {
   "name": "@gramex/filters",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Populate filter inputs/dropdowns from data",
-  "main": "filters.js",
+  "module": "filters.js",
   "browser": "filters.min.js",
   "scripts": {
-    "build": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js && esbuild filters.ts --bundle --platform=node --outfile=filters.js && esbuild tests/select.test.ts --outdir=tests/",
+    "build": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js && esbuild filters.ts --format=esm --bundle --minify --outfile=filters.js",
     "pretest": "npm run build",
     "test": "jest"
   },

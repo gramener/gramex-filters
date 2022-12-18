@@ -14,9 +14,26 @@ describe("test update()", () => {
     els.map((el: Element) => {
       const attrs = {};
       for (const attr of el.attributes) attrs[attr.name] = attr.value;
-      console.log(JSON.stringify(attrs))
+      console.log(JSON.stringify(attrs));
       return attrs;
     });
+
+  test("#basic-usage creates and adds <select>s and <option>s", async () => {
+    await expect(
+      page.$$eval("#basic-usage option", (els) =>
+        els.map((el) => `${el?.parentElement?.getAttribute("name")} ${el.value}`)
+      )
+    ).resolves.toEqual([
+      "product Alpha",
+      "product Beta",
+      "product Gamma",
+      "city London",
+      "city Oslo",
+      "city Paris",
+      "channel Direct",
+      "channel Indirect",
+    ]);
+  });
 
   test("#plain-select adds options to <select>", async () => {
     await expect(
@@ -62,6 +79,9 @@ describe("test update()", () => {
   test("#filters-without-elements creates <select> as required", async () => {
     for (const [key, values] of Object.entries(sales)) {
       await expect(
+        page.$$eval(`#filters-without-elements [name="${key}"]`, mapAttrs)
+      ).resolves.toEqual([{ name: key, class: "form-control" }]);
+      await expect(
         page.$$eval(`#filters-without-elements [name="${key}"] option`, mapText)
       ).resolves.toEqual(["-", ...(values as string[])]);
     }
@@ -93,7 +113,7 @@ describe("test update()", () => {
       ).resolves.toEqual(["-", ...(values as string[])]);
       await expect(
         page.$$eval(`#filters-selected [name="${key}"] option[selected]`, mapAttrs)
-      ).resolves.toEqual([{"selected": "", "value": (values as string[])[1]}]);
+      ).resolves.toEqual([{ selected: "", value: (values as string[])[1] }]);
     }
   });
 });

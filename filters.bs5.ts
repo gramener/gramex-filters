@@ -5,14 +5,15 @@ export default {
     selector: ({ name }) => `.dropdown.${name} .dropdown-menu,.dropdown#${name} .dropdown-menu`,
     render: ({
       name,
-      values,
-      selector,
+      value,
       label = name,
+      multiple = false,
       default: defaults,
       buttonClass = "btn btn-primary",
       dropdownClass = "",
       menuClass = "",
-      multiple = false,
+      values,
+      selector,
       ...attrs
     }): string =>
       `

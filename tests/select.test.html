@@ -10,7 +10,9 @@
   <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
-<body>
+<body class="container my-3">
+
+  <form id="basic-usage"></form>
 
   <div id="plain-select">
     <select id="cities"></select>
@@ -81,13 +83,23 @@
   </form>
 
   <script src="../filters.min.js"></script>
-  <script>
+  <script type="module">
+    import { render } from "../filters.js"
+    render({
+      container: "#basic-usage",
+      data: {
+        "product": ["Alpha", "Beta", "Gamma"],
+        "city": ["London", "Oslo", "Paris"],
+        "channel": ["Direct", "Indirect"]
+      }
+    })
+
     const actions = [
       fetch("data-cities.json")
         .then((r) => r.json())
         .then((data) => {
           gramex.filters.render({
-            element: "#plain-select",
+            container: "#plain-select",
             data: { cities: data },
           });
         }),
@@ -95,15 +107,15 @@
       fetch("data-sales.json")
         .then((r) => r.json())
         .then((data) => {
-          gramex.filters.render({ element: "#filters-defined-as-name", data: data });
-          gramex.filters.render({ element: "#filters-defined-as-id", data: data });
+          gramex.filters.render({ container: "#filters-defined-as-name", data: data });
+          gramex.filters.render({ container: "#filters-defined-as-id", data: data });
           gramex.filters.render({
-            element: "#filters-with-global-defaults",
+            container: "#filters-with-global-defaults",
             data: data,
             fields: { default: "-" },
           });
           gramex.filters.render({
-            element: "#filters-with-field-defaults",
+            container: "#filters-with-field-defaults",
             data: data,
             field: {
               product: { default: "-" },
@@ -114,31 +126,31 @@
         }),
 
       gramex.filters.render({
-        element: "#filters-with-url",
+        container: "#filters-with-url",
         url: "data-sales.json",
         fields: { default: "-" },
       }),
 
       gramex.filters.render({
-        element: "#filters-without-elements",
+        container: "#filters-without-elements",
         url: "data-sales.json",
-        fields: { default: "-" },
+        fields: { default: "-", class: "form-control" },
       }),
 
       gramex.filters.render({
-        element: "#filters-without-elements-multiple",
-        url: "data-sales.json",
-        fields: { default: "-", multiple: true },
-      }),
-
-      gramex.filters.render({
-        element: "#filters-with-attrs",
+        container: "#filters-without-elements-multiple",
         url: "data-sales.json",
         fields: { default: "-", multiple: true },
       }),
 
       gramex.filters.render({
-        element: "#filters-selected",
+        container: "#filters-with-attrs",
+        url: "data-sales.json",
+        fields: { default: "-", multiple: true },
+      }),
+
+      gramex.filters.render({
+        container: "#filters-selected",
         url: "data-sales.json",
         fields: {
           default: "-",
@@ -160,7 +172,7 @@
         .then((r) => r.json())
         .then((data) => {
           gramex.filters.render({
-            element: "#filters-with-html-templates",
+            container: "#filters-with-html-templates",
             data: data,
             field: {
               product: { default: { product_id: "", product: "" } },
@@ -181,7 +193,7 @@
         }),
 
       gramex.filters.render({
-        element: "#bootstrap-without-elements",
+        container: "#bootstrap-without-elements",
         type: "bs5",
         url: "data-sales.json",
         fields: { multiple: true, buttonClass: "btn btn-danger", dropdownClass: "mx-1 my-3" },

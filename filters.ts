@@ -6,7 +6,7 @@ const defaults: { [key: string]: AttrSpecs } = {
   bs5: bs5Defaults,
 };
 
-export function render(opt: RenderOptions): void | Promise<void> {
+export function render(opt: RenderOptions): void | Promise<any> {
   // If no .data, fetch from .url, else fail
   if (!opt.data)
     if (opt.url) {
@@ -16,13 +16,16 @@ export function render(opt: RenderOptions): void | Promise<void> {
           .then((r) => r.json())
           .then((data) => {
             render({ ...opt, data });
-            resolve();
+            resolve(data);
           });
       });
-    } else throw new Error(`Cannot update filters without .url or .data`);
+      // TODO: test error handling
+    } else throw new Error(`filters: missing options {url , data}`);
 
-  const root = opt.element instanceof Element ? opt.element : document.querySelector(opt.element);
-  if (!root) throw new Error(`Cannot update filters on missing "${opt.element}"`);
+  const root =
+    opt.container instanceof Element ? opt.container : document.querySelector(opt.container);
+  // TODO: test error handling
+  if (!root) throw new Error(`filters: missing {container: ${opt.container}}`);
 
   const type = opt.type || "select";
 
@@ -40,7 +43,8 @@ export function render(opt: RenderOptions): void | Promise<void> {
       root.insertAdjacentHTML("beforeend", render(fieldData));
       el = root.querySelector(fieldData.selector as string);
     }
-    if (!el) throw new Error(`Cannot update filter ${name} on missing "${fieldData.selector}"`);
+    // TODO: test error handling
+    if (!el) throw new Error(`filters: field ${name} missing {selector: ${fieldData.selector}}`);
 
     ({ render, ...value } = valueSpec[name]);
     // Insert default value if required and missing
@@ -60,7 +64,7 @@ export function render(opt: RenderOptions): void | Promise<void> {
 
 const functor = (v: any) => (typeof v === "function" ? v : () => v);
 
-// TODO: Document this like crazy. It's complicated.
+// TODO: JSDoc this like crazy. It's complicated.
 // maps: .attr = value | .attr.name = value
 // map: .name.attr = value
 // attrMap = .name.attr = value
@@ -79,7 +83,11 @@ export function attrMap(attrs: AttrSpec): string {
   /** Convert attributes object to string of HTML attributes */
   const html: string[] = [];
   for (let [key, value] of Object.entries(attrs))
-    html.push(`${key}="${value.replaceAll('"', "&quot;")}"`);
+    if (typeof value == "boolean") {
+      if (value) html.push(key);
+    } else {
+      html.push(`${key}="${value.toString().replace(/"/g, "&quot;")}"`);
+    }
   return html.join(" ");
 }
 
@@ -96,7 +104,7 @@ type FieldSpec = {
 // TODO: Rename RenderOptions to FilterOptions
 interface RenderOptions {
   type: "select" | "bs5" | "bootstrap-select" | "select2" | "selectize";
-  element: string | Element;
+  container: string | Element;
   url?: RequestInfo | URL;
   data?: { [key: string]: (object | string)[] };
   fields: FieldSpec;
