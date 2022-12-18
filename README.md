@@ -11,17 +11,17 @@ Sample usage:
 gramex.filters.render({
   container: "form",
   data: {
-    "city": [
-      {label: "London", value: "LON"},
-      {label: "Oslo", value: "OSL"},
-      {label: "Paris", value: "PAR"},
+    city: [
+      { label: "London", value: "LON" },
+      { label: "Oslo", value: "OSL" },
+      { label: "Paris", value: "PAR" },
     ],
-    "channel": [
-      {label: "Direct", value: "DIR"},
-      {label: "Indirect", value: "IND"},
-    ]
-  }
-})
+    channel: [
+      { label: "Direct", value: "DIR" },
+      { label: "Indirect", value: "IND" },
+    ],
+  },
+});
 ```
 
 ## Installation
@@ -54,15 +54,15 @@ For use with ES6 modules, use:
 ```html
 <form id="basic-usage"></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form#basic-usage",
     data: {
-      "product": ["Alpha", "Beta", "Gamma"],
-      "city": ["London", "Oslo", "Paris"],
-      "channel": ["Direct", "Indirect"]
-    }
-  })
+      product: ["Alpha", "Beta", "Gamma"],
+      city: ["London", "Oslo", "Paris"],
+      channel: ["Direct", "Indirect"],
+    },
+  });
 </script>
 ```
 
@@ -134,13 +134,13 @@ Depending on the `type`, field and value attributes are treated specially, as be
   E.g. `selector: "select[data-name="${name}]"` renders matching `<select data-name="...">`
   if they exist, else creates new ones
 - `render`: function to render HTML if no `<select>` is found.
-  Defaults roughly to ``({label, name}) => `<label>${label} <select name="${name}"></select></label>`;``
+  Defaults roughly to `` ({label, name}) => `<label>${label} <select name="${name}"></select></label>`; ``
 
 `value`/`values` attributes:
 
 - `value`: sets `<option value="${value}">`
 - `label`: sets `<option>${label}</option>`. Defaults to `value`
-- `render`: function to render HTML if no `<option>` is found. Defaults roughly to ``({label, value}) => `<option value="${value}">${label}</option>`;``
+- `render`: function to render HTML if no `<option>` is found. Defaults roughly to `` ({label, value}) => `<option value="${value}">${label}</option>`; ``
 
 ### `type="bs5"`
 
@@ -163,7 +163,7 @@ Depending on the `type`, field and value attributes are treated specially, as be
 
 - `value`: sets `active` class on `.dropdown-item` if `value` matches the current value
 - `label`: sets `<li><a class="dropdown-item"}>${label}</a></li>`. Defaults to `value`
-- `render`: function to render HTML if no `<option>` is found. Defaults roughly to ``({label}) => <li><a class="dropdown-item">${label}</a></li>``
+- `render`: function to render HTML if no `<option>` is found. Defaults roughly to `({label}) => <li><a class="dropdown-item">${label}</a></li>`
 
 ## Examples
 
@@ -174,7 +174,7 @@ This loads data from `data-sales.json` and renders it as filters into the `<form
 ```html
 <form></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form",
     url: "data-sales.json",
@@ -196,20 +196,22 @@ This renders:
 
 ![3 fields: product, city, channel](docs/basic-usage.png)
 
-
 ### Add classes to field
 
 Add `fields.class` to specify classes for all fields:
 
 ```html
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 <form class="d-flex"></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form",
     url: "data-sales.json",
-    fields: { class: "form-select me-2" }
+    fields: { class: "form-select me-2" },
   });
 </script>
 ```
@@ -218,24 +220,26 @@ This renders:
 
 ![3 fields with Bootstrap classes added](docs/bootstrap-classes.png)
 
-
 ### Use existing HTML
 
 To apply the filters to existing (styled) HTML, the `<select>` elements should have a `name=`,
 `class=` or `id=` that matches the field name.
 
 ```html
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 <form class="row">
   <div class="col"><select name="city" class="form-select"></select></div>
   <div class="col"><select name="product" class="form-select"></select></div>
   <div class="col"><select name="channel" class="form-select"></select></div>
 </form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form",
-    url: "data-sales.json"
+    url: "data-sales.json",
   });
 </script>
 ```
@@ -244,7 +248,6 @@ This re-uses the existing `<select>` elements in the same order and style as in 
 
 ![3 fields, re-using the existing HTML elements](docs/existing-html.png)
 
-
 ### Set selected values
 
 Add `fields.value` to set selected values:
@@ -252,11 +255,11 @@ Add `fields.value` to set selected values:
 ```html
 <form class="d-flex"></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form",
     url: "data-sales.json",
-    fields: { value: { product: "Beta", city: "Oslo", "channel": "Direct" } }
+    fields: { value: { product: "Beta", city: "Oslo", channel: "Direct" } },
   });
 </script>
 ```
@@ -265,7 +268,6 @@ This renders:
 
 ![3 fields with specified values selected](docs/selected-value.png)
 
-
 ### Set custom labels
 
 Add `value.[name].label` to set custom labels:
@@ -273,18 +275,18 @@ Add `value.[name].label` to set custom labels:
 ```html
 <form></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   const productDetails = {
-    "Alpha": "Version Alpha: $100",
-    "Beta": "Version Beta: $400",
-    "Gamma": "Version Gamma: $1,000",
-  }
+    Alpha: "Version Alpha: $100",
+    Beta: "Version Beta: $400",
+    Gamma: "Version Gamma: $1,000",
+  };
   render({
     container: "form",
     url: "data-sales.json",
     value: {
-      product: { label: ({value}) => productDetails[value] },
-    }
+      product: { label: ({ value }) => productDetails[value] },
+    },
   });
 </script>
 ```
@@ -293,7 +295,6 @@ This renders:
 
 ![Product values replaced by custom labels](docs/value-labels.png)
 
-
 ### Add default value
 
 Add `fields.default.[name]` to add a default value:
@@ -301,7 +302,7 @@ Add `fields.default.[name]` to add a default value:
 ```html
 <form></form>
 <script type="module">
-  import { render } from "node_modules/@gramex/filters/filters.js"
+  import { render } from "node_modules/@gramex/filters/filters.js";
   render({
     container: "form",
     url: "data-sales.json",
@@ -310,8 +311,8 @@ Add `fields.default.[name]` to add a default value:
         product: { label: "Any product", value: "" },
         city: { label: "Any city", value: "" },
         channel: { label: "Any channel", value: "" },
-      }
-    }
+      },
+    },
   });
 </script>
 ```

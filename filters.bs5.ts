@@ -2,7 +2,8 @@ import { attrMap, AttrSpec } from "./filters";
 
 export default {
   fields: {
-    selector: ({ name }) => `.dropdown.${name} .dropdown-menu,.dropdown#${name} .dropdown-menu`,
+    selector: ({ name }) =>
+      `.dropdown.${name} .dropdown-menu,.dropdown#${name} .dropdown-menu`,
     render: ({
       name,
       value,
@@ -29,7 +30,9 @@ export default {
       fieldData?: AttrSpec
     ): string =>
       `<li><a
-            class="dropdown-item ${dropdownItemClass} ${value == fieldData?.value ? "active" : ""}"
+            class="dropdown-item ${dropdownItemClass} ${
+        value == fieldData?.value ? "active" : ""
+      }"
             ${attrMap(attrs)}>${label}</a>
         </li>`,
   },
