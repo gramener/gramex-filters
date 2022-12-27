@@ -1,7 +1,7 @@
 # @gramex/filters
 
 **filters** renders data as filters using `<select>` / `<input>` elements, or frameworks like
-[Bootstrap](https://getbootstrap.com/docs/5.2/components/forms/),
+[Bootstrap](https://getbootstrap.com/docs/5.2/),
 [bootstrap-select](https://developer.snapappointments.com/bootstrap-select/),
 etc.
 
@@ -121,6 +121,8 @@ Depending on the `type`, field and value attributes are treated specially, as be
 
 ### `type="select"`
 
+<!-- TODO: Document what this does and what the output looks like -->
+
 `field`/`fields` attributes:
 
 - `name`: sets `<select name="${name}">`. E.g. `name: "city"`
@@ -143,6 +145,8 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `render`: function to render HTML if no `<option>` is found. Defaults roughly to `` ({label, value}) => `<option value="${value}">${label}</option>`; ``
 
 ### `type="bs5"`
+
+<!-- TODO: Document what this does and what the output looks like -->
 
 `field`/`fields` attributes:
 

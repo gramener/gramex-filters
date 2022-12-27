@@ -1,3 +1,4 @@
+// TODO: Create a plugin mechanism that allows optional import of plugins.
 import selectDefaults from "./filters.select";
 import bs5Defaults from "./filters.bs5";
 
@@ -6,21 +7,11 @@ const defaults: { [key: string]: AttrSpecs } = {
   bs5: bs5Defaults,
 };
 
-export function render(opt: RenderOptions): void | Promise<any> {
+export async function render(opt: RenderOptions) {
   // If no .data, fetch from .url, else fail
-  if (!opt.data)
-    if (opt.url) {
-      const url: RequestInfo | URL = opt.url;
-      return new Promise((resolve) => {
-        fetch(url)
-          .then((r) => r.json())
-          .then((data) => {
-            render({ ...opt, data });
-            resolve(data);
-          });
-      });
-      // TODO: test error handling
-    } else throw new Error(`filters: missing options {url , data}`);
+  if (!opt.data && !opt.url)
+    throw new Error(`filters: missing options {url , data}`)
+  const data: FilterData = opt.data || (await fetch(opt.url as RequestInfo | URL).then((r) => r.json()));
 
   const root =
     opt.container instanceof Element
@@ -33,19 +24,19 @@ export function render(opt: RenderOptions): void | Promise<any> {
 
   // Convert all field/value values into field name -> { spec }
   const fieldSpec = getSpecs(
-    Object.keys(opt.data),
+    Object.keys(data),
     defaults[type].fields,
     opt.fields,
     opt.field
   );
   const valueSpec = getSpecs(
-    Object.keys(opt.data),
+    Object.keys(data),
     defaults[type].values,
     opt.values,
     opt.value
   );
 
-  for (const [name, values] of Object.entries(opt.data)) {
+  for (const [name, values] of Object.entries(data)) {
     let render: Function,
       field: { [key: string]: Function },
       value: { [key: string]: Function };
@@ -79,6 +70,7 @@ export function render(opt: RenderOptions): void | Promise<any> {
         return render(valueData, fieldData);
       })
       .join("");
+    // TODO: Run a postRender? function. Set up ionRangeSlider and other JS using this
   }
 }
 
@@ -106,6 +98,9 @@ function getSpecs(
   return specs;
 }
 
+
+// Interfaces
+// ---------------------------------------------------------------------------
 export function attrMap(attrs: AttrSpec): string {
   /** Convert attributes object to string of HTML attributes */
   const html: string[] = [];
@@ -120,6 +115,7 @@ export function attrMap(attrs: AttrSpec): string {
 
 export type AttrSpec = { [key: string]: any };
 type AttrSpecs = { [key: string]: AttrSpec };
+type FilterData = { [key: string]: (object | string)[] };
 type FieldSpec = {
   render?: Function;
   selector?: string | ((...args: any[]) => string);
@@ -133,7 +129,7 @@ interface RenderOptions {
   type: "select" | "bs5" | "bootstrap-select" | "select2" | "selectize";
   container: string | Element;
   url?: RequestInfo | URL;
-  data?: { [key: string]: (object | string)[] };
+  data?: FilterData;
   fields: FieldSpec;
   field: { [key: string]: FieldSpec };
   values: AttrSpec;
