@@ -2,7 +2,7 @@
 
 module.exports = {
   server: {
-    command: "node-http-server port=4444 verbose",
+    command: "serve -l 4444",
     protocol: "http",
     port: 4444,
     path: "/package.json",
