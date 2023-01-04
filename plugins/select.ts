@@ -1,4 +1,4 @@
-import { attrMap, AttrSpec } from "./filters";
+import { attrMap, AttrSpec } from "../filters";
 
 export default {
   fields: {

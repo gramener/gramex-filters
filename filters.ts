@@ -1,6 +1,6 @@
-// TODO: Create a plugin mechanism that allows optional import of plugins.
-import selectDefaults from "./filters.select";
-import bs5Defaults from "./filters.bs5";
+// TODO: Allow optional import of plugins
+import selectDefaults from "./plugins/select";
+import bs5Defaults from "./plugins/bs5";
 
 const defaults: { [key: string]: AttrSpecs } = {
   select: selectDefaults,

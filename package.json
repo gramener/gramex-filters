@@ -8,9 +8,7 @@
     "watch": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js --watch",
     "build-browser": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js",
     "build-esm": "esbuild filters.ts --format=esm --bundle --minify --allow-overwrite --outfile=filters.js",
-    "build-select": "esbuild filters.select.ts --format=esm --outfile=filters.select.js",
-    "build-bs5": "esbuild filters.bs5.ts --format=esm --outfile=filters.bs5.js",
-    "build": "npm run build-browser && npm run build-esm && npm run build-select && npm run build-bs5",
+    "build": "npm run build-browser && npm run build-esm",
     "pretest": "npm run build",
     "test": "jest"
   },
