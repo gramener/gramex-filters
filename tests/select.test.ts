@@ -1,25 +1,29 @@
 import { promises as fs } from "fs";
 
-describe("test update()", () => {
-  let cities: any;
-  let sales: any
-
-  beforeAll(async () => {
-    cities = JSON.parse(await fs.readFile("tests/data-cities.json", { encoding: "utf8" }));
-    sales = JSON.parse(await fs.readFile("tests/data-sales.json", { encoding: "utf8" }));
-
-    page.on("console", (consoleObj) => console.log(consoleObj.text()));
-    await page.goto("http://127.0.0.1:4444/tests/select.test.html");
-    await page.waitForFunction("window.renderComplete");
+export const mapText = (els: Element[]) => els.map((el: Element) => el.textContent);
+export const mapAttrs = (els: Element[]) =>
+  els.map((el: Element) => {
+    const attrs = {};
+    for (const attr of el.attributes) attrs[attr.name] = attr.value;
+    return attrs;
   });
 
-  const mapText = (els: Element[]) => els.map((el: Element) => el.textContent);
-  const mapAttrs = (els: Element[]) =>
-    els.map((el: Element) => {
-      const attrs = {};
-      for (const attr of el.attributes) attrs[attr.name] = attr.value;
-      return attrs;
-    });
+export const setupPage = async (prefix: string) => {
+  page.on("console", (consoleObj) => console.log(consoleObj.text()));
+  await page.goto(`http://127.0.0.1:4444/tests/${prefix}.test.html`);
+  await page.waitForFunction("window.renderComplete");
+
+  return {
+    cities: JSON.parse(await fs.readFile("tests/data-cities.json", { encoding: "utf8" })),
+    sales: JSON.parse(await fs.readFile("tests/data-sales.json", { encoding: "utf8" })),
+  };
+};
+
+describe("test update()", () => {
+  let cities: any;
+  let sales: any;
+
+  beforeAll(async () => ({ cities, sales } = await setupPage("select")));
 
   test("#basic-usage creates and adds <select>s and <option>s", async () => {
     await expect(

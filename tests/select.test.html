@@ -6,8 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filters</title>
-  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     select[data-update] { background-color: red; }
   </style>
@@ -85,9 +83,6 @@
   <form id="filters-update">
     <select name="product" data-update="x"></select>
     <span>#filters-update</span>
-  </form>
-
-  <form id="bootstrap-without-elements" class="d-flex">
   </form>
 
   <script src="../filters.min.js"></script>
@@ -205,19 +200,6 @@
             },
           });
         }),
-
-      gramex.filters.render({
-        container: "#bootstrap-without-elements",
-        type: "bs5",
-        url: "data-sales.json",
-        fields: { multiple: true, buttonClass: "btn btn-danger", dropdownClass: "mx-1 my-3" },
-        field: {
-          product: { default: { value: "", label: "---" } },
-          city: { default: { value: "", label: "---" } },
-          channel: { default: { value: "", label: "---" } },
-        },
-        values: { href: ({ value }) => `https://example.com/${value}` },
-      }),
 
     ];
     Promise.all(actions).then(() => {
