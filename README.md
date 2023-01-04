@@ -135,8 +135,9 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `selector`: renders existing `<select>` elements if found.
   E.g. `selector: "select[data-name="${name}]"` renders matching `<select data-name="...">`
   if they exist, else creates new ones
-- `render`: function to render HTML if no `<select>` is found.
+- `render`: `function({name, values, ...})` that returns HTML to render if no`<select>`is found.
   Defaults roughly to `` ({label, name}) => `<label>${label} <select name="${name}"></select></label>`; ``
+- `update`: `function({el, name, values, ...})` called after rendering HTML. Used to bind event handlers
 
 `value`/`values` attributes:
 
@@ -161,7 +162,8 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `menuClass`: sets `<ul class="dropdown-menu ${menuClass}"></ul>`
 - `values`: list of values to render as options. Defaults to `data[name]`
 - `selector`: renders existing `.dropdown` elements if found.
-- `render`: function to render HTML if no `.dropdown` is found
+- `render`: `function({name, values, ...})` that returns HTML to render if no `.dropdown` is found
+- `update`: `function({el, name, values, ...})` called after rendering HTML. Used to bind event handlers
 
 `value`/`values` attributes:
 
@@ -324,3 +326,19 @@ Add `fields.default.[name]` to add a default value:
 This renders:
 
 ![Default values added to each field](docs/default-values.png)
+
+<!--
+
+```bash
+# Run manual tests
+npx serve &
+npm run watch &
+# Visit http://localhost:3000/tests/select.test.html
+
+# Run tests
+npm test
+
+# Publish
+npm publish
+```
+-->

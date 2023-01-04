@@ -36,41 +36,39 @@ export async function render(opt: RenderOptions) {
     opt.value
   );
 
+  // Render each field
   for (const [name, values] of Object.entries(data)) {
     let render: Function,
+      update: Function,
       field: { [key: string]: Function },
       value: { [key: string]: Function };
-    ({ render, ...field } = fieldSpec[name]);
     const fieldData: FieldSpec = { name: name, values: values };
-    for (const [attr, func] of Object.entries(field))
-      fieldData[attr] = func(fieldData);
+    ({ render, update, ...field } = fieldSpec[name]);
+    for (const [attr, func] of Object.entries(field)) fieldData[attr] = func(fieldData);
     let el = root.querySelector(fieldData.selector as string);
     if (!el) {
       root.insertAdjacentHTML("beforeend", render(fieldData));
       el = root.querySelector(fieldData.selector as string);
     }
     // TODO: test error handling
-    if (!el)
-      throw new Error(
-        `filters: field ${name} missing {selector: ${fieldData.selector}}`
-      );
+    if (!el) throw new Error(`filters: field ${name} missing {selector: ${fieldData.selector}}`);
 
-    ({ render, ...value } = valueSpec[name]);
     // Insert default value if required and missing
     const rows =
-      typeof fieldData.default == "undefined" ||
-      values.includes(fieldData.default)
+      typeof fieldData.default == "undefined" || values.includes(fieldData.default)
         ? values
         : [fieldData.default, ...values];
+    // Render each value
+    ({ render, ...value } = valueSpec[name]);
     el.innerHTML = rows
       .map((row) => {
         const valueData = typeof row == "object" ? row : { value: row };
-        for (const [attr, func] of Object.entries(value))
-          valueData[attr] = func(valueData);
+        for (const [attr, func] of Object.entries(value)) valueData[attr] = func(valueData);
         return render(valueData, fieldData);
       })
       .join("");
-    // TODO: Run a postRender? function. Set up ionRangeSlider and other JS using this
+    if (typeof update == "function")
+      update({ el, ...fieldSpec[name], ...fieldData });
   }
 }
 
@@ -85,7 +83,7 @@ function getSpecs(
   defaults: AttrSpec,
   maps: AttrSpec,
   map: AttrSpecs
-) {
+): AttrSpecs {
   const specs: AttrSpecs = {};
   for (const [attr, value] of Object.entries(Object.assign({}, defaults, maps)))
     if (typeof value == "object")
@@ -118,6 +116,7 @@ type AttrSpecs = { [key: string]: AttrSpec };
 type FilterData = { [key: string]: (object | string)[] };
 type FieldSpec = {
   render?: Function;
+  update?: Function;
   selector?: string | ((...args: any[]) => string);
   default?: string | Function;
   multiple?: string | Function;
@@ -126,7 +125,7 @@ type FieldSpec = {
 
 // TODO: Rename RenderOptions to FilterOptions
 interface RenderOptions {
-  type: "select" | "bs5" | "bootstrap-select" | "select2" | "selectize";
+  type: "select" | "bs5" | "ion" | "bootstrap-select" | "select2" | "selectize";
   container: string | Element;
   url?: RequestInfo | URL;
   data?: FilterData;

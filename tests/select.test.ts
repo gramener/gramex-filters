@@ -119,6 +119,13 @@ describe("test update()", () => {
       ).resolves.toEqual([{ selected: "", value: (values as string[])[1] }]);
     }
   });
+  test("#filters-update calls update({el, name, ...})", async () => {
+    for (const [key, values] of Object.entries(sales)) {
+      await expect(page.$$eval(`#filters-update [name="${key}"]`, mapAttrs)).resolves.toEqual([
+        { name: key, "data-update": key },
+      ]);
+    }
+  });
 });
 
 // TODO

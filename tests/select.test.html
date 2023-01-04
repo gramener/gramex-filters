@@ -8,6 +8,9 @@
   <title>Filters</title>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    select[data-update] { background-color: red; }
+  </style>
 </head>
 
 <body class="container my-3">
@@ -77,6 +80,11 @@
     <select name="city"></select>
     <select name="channel"></select>
     <span>#filters-with-html-templates</span>
+  </form>
+
+  <form id="filters-update">
+    <select name="product" data-update="x"></select>
+    <span>#filters-update</span>
   </form>
 
   <form id="bootstrap-without-elements" class="d-flex">
@@ -168,6 +176,12 @@
         }
       }),
 
+      gramex.filters.render({
+        container: "#filters-update",
+        url: "data-sales.json",
+        fields: { update: ({ el, name }) => el.dataset.update = name },
+      }),
+
       fetch("data-sales-labels.json")
         .then((r) => r.json())
         .then((data) => {
@@ -198,11 +212,11 @@
         url: "data-sales.json",
         fields: { multiple: true, buttonClass: "btn btn-danger", dropdownClass: "mx-1 my-3" },
         field: {
-          product: { default: {value: "", label: "---"} },
-          city: { default: {value: "", label: "---"} },
-          channel: { default: {value: "", label: "---"} },
+          product: { default: { value: "", label: "---" } },
+          city: { default: { value: "", label: "---" } },
+          channel: { default: { value: "", label: "---" } },
         },
-        values: { href: ({value}) => `https://example.com/${value}` },
+        values: { href: ({ value }) => `https://example.com/${value}` },
       }),
 
     ];

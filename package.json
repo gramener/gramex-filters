@@ -5,6 +5,7 @@
   "module": "filters.js",
   "browser": "filters.min.js",
   "scripts": {
+    "watch": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js --watch",
     "build-browser": "esbuild filters.ts --format=iife --global-name=gramex.filters --bundle --sourcemap --minify --outfile=filters.min.js",
     "build-esm": "esbuild filters.ts --format=esm --bundle --minify --allow-overwrite --outfile=filters.js",
     "build-select": "esbuild filters.select.ts --format=esm --outfile=filters.select.js",
