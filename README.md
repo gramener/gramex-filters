@@ -354,6 +354,33 @@ This renders:
 
 ![Default values added to each field](docs/default-values.png)
 
+### Use Bootstrap-select
+
+To use [Bootstrap-select](https://developer.snapappointments.com/bootstrap-select/), add `class="selectpicker"`
+and any [other attributes](https://developer.snapappointments.com/bootstrap-select/examples/) to the `<select>` elements:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1/dist/css/bootstrap-select.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1"></script>
+
+<form></form>
+
+<script type="module">
+  import { render } from "node_modules/@gramex/filters/filters.js";
+  render({
+    container: "form",
+    url: "data-sales.json",
+    fields: { class: "selectpicker", "data-live-search": "true" },
+  });
+  // Refresh after rendering
+  $('.selectpicker').selectpicker('refresh');
+</script>
+```
+
 <!--
 
 ```bash
