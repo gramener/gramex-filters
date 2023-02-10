@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 
 export const mapText = (els: Element[]) => els.map((el: Element) => el.textContent);
 export const mapAttrs = (els: Element[]) =>
-  els.map((el: Element) => {
+  els.map((el) => {
     const attrs = {};
     for (const attr of el.attributes) attrs[attr.name] = attr.value;
     return attrs;

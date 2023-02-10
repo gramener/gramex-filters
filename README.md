@@ -145,6 +145,18 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `label`: sets `<option>${label}</option>`. Defaults to `value`
 - `render`: function to render HTML if no `<option>` is found. Defaults roughly to `` ({label, value}) => `<option value="${value}">${label}</option>`; ``
 
+To render your own field, use:
+
+```html
+<select name="${name}"></select>
+```
+
+To render your own value, use:
+
+```html
+<option ${value == fieldData?.value ? "selected" : ""} value="${value}">${label}</option>
+```
+
 ### `type="bs5"`
 
 <!-- TODO: Document what this does and what the output looks like -->
@@ -161,7 +173,7 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `dropdownClass`: sets `<div class="dropdown ${dropdownClass}">`
 - `menuClass`: sets `<ul class="dropdown-menu ${menuClass}"></ul>`
 - `values`: list of values to render as options. Defaults to `data[name]`
-- `selector`: renders existing `.dropdown` elements if found.
+- `selector`: renders existing `.dropdown` elements with an ID/class matching `name`, if they have a `.dropdown-menu` child. See example below.
 - `render`: `function({name, values, ...})` that returns HTML to render if no `.dropdown` is found
 - `update`: `function({el, name, values, ...})` called after rendering HTML. Used to bind event handlers
 
@@ -170,6 +182,21 @@ Depending on the `type`, field and value attributes are treated specially, as be
 - `value`: sets `active` class on `.dropdown-item` if `value` matches the current value
 - `label`: sets `<li><a class="dropdown-item"}>${label}</a></li>`. Defaults to `value`
 - `render`: function to render HTML if no `<option>` is found. Defaults roughly to `({label}) => <li><a class="dropdown-item">${label}</a></li>`
+
+To render your own field, use:
+
+```html
+<div class="dropdown ${name} ${dropdownClass}">
+  <button class="dropdown-toggle ${btnClass}" type="button" data-bs-toggle="dropdown">${label}</button>
+  <ul class="dropdown-menu ${menuClass}"></ul>
+</div>
+```
+
+To render your own value, use:
+
+```html
+<li><a class="dropdown-item ${dropdownItemClass} ${value == fieldData?.value ? 'active' : ''}">${label}</a></li>
+```
 
 ## Examples
 
@@ -335,7 +362,7 @@ npx serve &
 npm run watch &
 # Visit http://localhost:3000/tests/select.test.html
 
-# Run tests
+# Run tests. If puppeteer "Could not find Chromium", run "npm ci"
 npm test
 
 # Publish

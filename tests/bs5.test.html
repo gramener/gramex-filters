@@ -12,7 +12,17 @@
 
 <body class="container my-3">
 
-  <form id="bootstrap-without-elements" class="d-flex">
+  <form id="bootstrap-without-elements" class="d-flex"></form>
+
+  <form id="bootstrap-with-elements" class="d-flex">
+    <div class="dropdown product me-3">
+      <button class="dropdown-toggle btn btn-primary" type="button" data-bs-toggle="dropdown">Product</button>
+      <ul class="dropdown-menu"></ul>
+    </div>
+    <div class="dropdown city me-3">
+      <button class="dropdown-toggle btn btn-primary" type="button" data-bs-toggle="dropdown">City</button>
+      <ul class="dropdown-menu"></ul>
+    </div>
   </form>
 
   <script src="../filters.min.js"></script>
@@ -33,6 +43,11 @@
         values: { href: ({ value }) => `https://example.com/${value}` },
       }),
 
+      gramex.filters.render({
+        container: "#bootstrap-with-elements",
+        type: "bs5",
+        url: "data-sales.json"
+      })
     ];
     Promise.all(actions).then(() => {
       window.renderComplete = true;

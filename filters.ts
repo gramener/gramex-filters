@@ -9,31 +9,29 @@ const defaults: { [key: string]: AttrSpecs } = {
 
 export async function render(opt: RenderOptions) {
   // If no .data, fetch from .url, else fail
-  if (!opt.data && !opt.url)
-    throw new Error(`filters: missing options {url , data}`)
-  const data: FilterData = opt.data || (await fetch(opt.url as RequestInfo | URL).then((r) => r.json()));
+  if (!opt.data && !opt.url) throw new Error(`filters: missing options {url , data}`);
+  const data: FilterData =
+    opt.data || (await fetch(opt.url as RequestInfo | URL).then((r) => r.json()));
 
   const root =
-    opt.container instanceof Element
-      ? opt.container
-      : document.querySelector(opt.container);
+    opt.container instanceof Element ? opt.container : document.querySelector(opt.container);
   // TODO: test error handling
   if (!root) throw new Error(`filters: missing {container: ${opt.container}}`);
-
-  const type = opt.type || "select";
 
   // Convert all field/value values into field name -> { spec }
   const fieldSpec = getSpecs(
     Object.keys(data),
-    defaults[type].fields,
     opt.fields,
-    opt.field
+    opt.field,
+    opt.type,
+    (type) => defaults[type].fields
   );
   const valueSpec = getSpecs(
     Object.keys(data),
-    defaults[type].values,
     opt.values,
-    opt.value
+    opt.value,
+    opt.type,
+    (type) => defaults[type].values
   );
 
   // Render each field
@@ -67,8 +65,7 @@ export async function render(opt: RenderOptions) {
         return render(valueData, fieldData);
       })
       .join("");
-    if (typeof update == "function")
-      update({ el, ...fieldSpec[name], ...fieldData });
+    if (typeof update == "function") update({ el, ...fieldSpec[name], ...fieldData });
   }
 }
 
@@ -80,33 +77,34 @@ const functor = (v: any) => (typeof v === "function" ? v : () => v);
 // attrMap = .name.attr = value
 function getSpecs(
   names: string[],
-  defaults: AttrSpec,
   maps: AttrSpec,
-  map: AttrSpecs
+  map: AttrSpecs,
+  type: string,
+  getDefault: (type: string) => AttrSpec
 ): AttrSpecs {
   const specs: AttrSpecs = {};
-  for (const [attr, value] of Object.entries(Object.assign({}, defaults, maps)))
+  // Use defaults from field-specific type (maps?.type) or global type (type) or "select"
+  maps = Object.assign({}, getDefault(maps?.type || type || "select"), maps);
+  for (const [attr, value] of Object.entries(maps)) {
     if (typeof value == "object")
-      for (const [name, val] of Object.entries(value))
-        (specs[name] ??= {})[attr] = functor(val);
+      for (const [name, val] of Object.entries(value)) (specs[name] ??= {})[attr] = functor(val);
     else for (const name of names) (specs[name] ??= {})[attr] = functor(value);
+  }
   for (const [name, attrs] of Object.entries(map || {}))
-    for (const [attr, value] of Object.entries(attrs))
-      (specs[name] ??= {})[attr] = functor(value);
+    for (const [attr, value] of Object.entries(attrs)) (specs[name] ??= {})[attr] = functor(value);
   return specs;
 }
 
-
 // Interfaces
 // ---------------------------------------------------------------------------
-export function attrMap(attrs: AttrSpec): string {
+export function attrMap(attrs: AttrSpec, keyMap: Function = (v: string) => v): string {
   /** Convert attributes object to string of HTML attributes */
   const html: string[] = [];
   for (let [key, value] of Object.entries(attrs))
     if (typeof value == "boolean") {
       if (value) html.push(key);
     } else {
-      html.push(`${key}="${value.toString().replace(/"/g, "&quot;")}"`);
+      html.push(`${keyMap(key)}="${value.toString().replace(/"/g, "&quot;")}"`);
     }
   return html.join(" ");
 }
@@ -119,6 +117,7 @@ type FieldSpec = {
   update?: Function;
   selector?: string | ((...args: any[]) => string);
   default?: string | Function;
+  type?: string;
   multiple?: string | Function;
   value?: string | Function;
 } & AttrSpec;
